@@ -13,9 +13,19 @@ int main(void){
     blink(1,200);
     //blink GP7
     unsigned char button_press = read_from_pin(0b01000000,0x09);
-    if(button_press){
-      set_pin(0b01000000,0x0A,0b10000000); //turn on GP7
-    }
+    if(!button_press){
+      //set_pin(0b01000000,0x0A,0b10000000); //turn on GP7
+      int j;
+      unsigned int t1;
+      for (j=0; j<10; j++){
+		set_pin(0b01000000,0x0A,0b10000000); ////turn on GP7
+		t1 = _CP0_GET_COUNT(); // should really check for overflow here
+		while(_CP0_GET_COUNT() < t1 + 12000*500){}
+		set_pin(0b01000000,0x0A,0b00000000); // turn off GP7
+        t1 = _CP0_GET_COUNT(); // should really check for overflow here
+		while(_CP0_GET_COUNT() < t1 + 12000*500){}
+      }
+	} 
     else{
       set_pin(0b01000000,0x0A,0b00000000); //turn off GP7
     }
